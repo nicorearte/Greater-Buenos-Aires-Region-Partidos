@@ -5,4 +5,4 @@ This R function assigns the "Partido" based on the "Localidad" column in a datas
 ## Installation
 
 ```r
-devtools::install_github("your-username/repo-name")
+devtools::install_github("nicorearte/Greater-Buenos-Aires-Region-Partidos")
