@@ -1,0 +1,138 @@
+# Define a function to create a "Partido" column based on "Localidad"
+assign_partido <- function(data, localidad_column = "Localidad", partido_column = "Partido", localidad_partido_map) {
+  library(dplyr)
+  library(stringi)
+
+  # Clean and process the 'Localidad' column
+  data <- data %>%
+    mutate(
+      # Clean the Localidad column
+      Localidad = toupper(stri_trans_general(str_trim(!!sym(localidad_column)), "Latin-ASCII")),
+      
+      # Assign 'Partido' based on the mapping provided
+      !!sym(partido_column) := case_when(
+        Localidad %in% localidad_partido_map[[1]] ~ localidad_partido_map[[2]],
+        TRUE ~ "otros partidos"
+      )
+    )
+  
+  return(data)
+}
+
+# Define the mapping between localidades and partidos
+localidad_partido_map <- list(
+  # Vicente Lopez
+  c("CARAPACHAY", "FLORIDA", "FLORIDA OESTE", "LA LUCILA", "MUNRO", "OLIVOS", 
+    "VICENTE LOPEZ", "VILLA ADELINA", "VILLA MARTELLI"), "Vicente Lopez",
+
+  # San Martin
+  c("SAN MARTIN", "VILLA DEVOTO", "VILLA DEL PARQUE", "SAN ANDRES", "VILLA BALLESTER", 
+    "VILLA MAIPU", "JOSE LEON SUAREZ", "VILLA JOSE LEON SUAREZ", "VILLA SAN ANDRES", 
+    "BILLINGHURST", "VILLA LYNCH"), "San Martin",
+
+  # Tigre
+  c("TIGRE", "GENERAL PACHECO", "DON TORCUATO", "RINCON DE MILBERG", "EL TALAR", 
+    "PACHECO", "ISLAS DEL DELTA", "NORDELTA", "DON TORCUATO OESTE", "DON TORCUATO ESTE", 
+    "LOS TRONCOS DEL TALAR", "BENAVIDEZ"), "Tigre",
+
+  # San Isidro
+  c("SAN ISIDRO", "BECCAR", "BAJO DE SAN ISIDRO", "LA HORQUETA", "MARTINEZ", 
+    "VILLA ADELINA", "BOULOGNE", "BOULOGNE SUR MER", "ACASSUSO"), "San Isidro",
+
+  # San Fernando
+  c("SAN FERNANDO", "TALAR", "VILLA DEL PARQUE", "VILLA LUZURIAGA", "VIRREYES", "VICTORIA"), 
+  "San Fernando",
+
+  # Escobar
+  c("ESCOBAR", "BELEN DE ESCOBAR", "MATHEU", "LARROQUE", "GRANJA DE MORENO", "GARIN"), "Escobar",
+
+  # Pilar
+  c("PILAR", "DEL VISO", "PIRQUE", "LA LOMA", "VILLA ROSA", "BARRIO PARQUE ALMIRANTE IRIZAR", 
+    "PRESIDENTE DERQUI", "LA LONJA"), "Pilar",
+
+  # Malvinas Argentinas
+  c("MALVINAS ARGENTINAS", "VILLA DE MARIA", "GRAL. LUJAN", "TORTUGUITAS", "GRAND BOURG", 
+    "VILLA DE MAYO", "LOS POLVORINES", "INGENIERO ADOLFO SOURDEAUX", 
+    "INGENIERO PABLO NOGUES"), "Malvinas Argentinas",
+
+  # Jose C. Paz
+  c("JOSE C. PAZ", "JOSÉ C. PAZ", "VILLA MARINA"), "Jose C Paz",
+
+  # Tres de Febrero
+  c("TRES DE FEBRERO", "LUGANO", "LAVALLA", "DON BOSCO", "CIUDADELA", "MARTIN CORONADO", 
+    "PABLO PODESTA"), "Tres de Febrero",
+
+  # San Miguel
+  c("SAN MIGUEL", "VILLA PELLEGRINI", "SAN MIGUEL VILLA", "BELLA VISTA"), "San Miguel",
+
+  # Moreno
+  c("MORENO", "SAN CARLOS", "VILLA PARQUE"), "Moreno",
+
+  # Hurlingham
+  c("HURLINGHAM", "JUAN R. CASTRO", "ARROYO SECO"), "Hurlingham",
+
+  # Ituzaingó
+  c("ITUZAINGO", "LOMAS DEL MIRADOR", "PATRICIOS"), "Ituzaingó",
+
+  # Merlo
+  c("MERLO", "MALABRIGO", "PUEBLO VIEJO"), "Merlo",
+
+  # Morón
+  c("MORON", "CASTELAR", "MORON SUR", "EL PALOMAR", "HAEDO"), "Morón",
+
+  # La Matanza
+  c("LA MATANZA", "SAN JUSTO", "VILLA LUZURIAGA", "LA TABLADA", "RAMOS MEJIA", "VIRREY DEL PINO"), 
+  "La Matanza",
+
+  # Ezeiza
+  c("EZEIZA", "CIUDAD JARDIN", "VILLA SANTA MARIA", "BARRIO SANTA PAULA"), "Ezeiza",
+
+  # Esteban Echeverria
+  c("ESTEBAN ECHEVERRIA", "LA REINA", "GOMEZ CARABOBO", "CANNING"), "Esteban Echeverria",
+
+  # Lomas de Zamora
+  c("LOMAS DE ZAMORA", "MONTE GRANDE", "BOLIVAR", "TEMPERLEY"), "Lomas de Zamora",
+
+  # Lanús
+  c("LANUS", "BANFIELD", "SANTA CATALINA", "MONTE CHINGOLO", "VILLA MARIA IRENE DE LOS REMEDIOS DE ESCALADA", 
+    "LANUS ESTE", "LANUS OESTE"), "Lanús",
+
+  # Avellaneda
+  c("AVELLANEDA", "WILDE", "SARANDI"), "Avellaneda",
+
+  # Quilmes
+  c("QUILMES", "BERAZATEGUI", "SAN FRANCISCO"), "Quilmes",
+
+  # Almirante Brown
+  c("ALMIRANTE BROWN", "BROWN", "SAN FERNANDO", "CLAYPOLE", "LONGCHAMPS"), "Almirante Brown",
+
+  # Presidente Perón
+  c("PRESIDENTE PERON", "GONZALEZ CATAN", "LA FALDA"), "Presidente Perón",
+
+  # Florencio Varela
+  c("FLORENCIO VARELA", "VILLA ESPERANZA", "CALLE ANCHA"), "Florencio Varela",
+
+  # Berazategui
+  c("BERAZATEGUI", "VILLA GALLARDO", "VILLA LA ANGELA"), "Berazategui",
+
+  # CABA
+  c("AGRONOMIA", "ALMAGRO", "BALVANERA", "BARRACAS", "BELGRANO", "BOEDO", "CABALLITO", "CHACARITA", 
+    "COLEGIALES", "CONSTITUCION", "FLORES", "FLORESTA", "LA BOCA", "LINIERS", "MONTE CASTRO", 
+    "MONTSERRAT", "NUNEZ", "PALERMO", "PARQUE CHACABUCO", "PARQUE PATRICIOS", "PUERTO MADERO", 
+    "RECOLETA", "RETIRO", "SAAVEDRA", "SAN CRISTOBAL", "SAN TELMO", "VELEZ SARSFIELD", "VILLA DEVOTO", 
+    "VILLA DEL PARQUE", "VILLA URQUIZA", "COGHLAN", "VILLA LUGANO", "VILLA LURO", "VILLA SANTA RITA", 
+    "VILLA GENERAL MITRE", "VILLA PUEYRREDON", "CIUDAD DE BUENOS AIRES", "VILLA SOLDATI", "PATERNAL"), 
+  "CABA"
+)
+
+# Load your dataset (replace with actual path)
+# your_data <- read.csv("your_data.csv")
+
+# Apply the function
+# your_data <- assign_partido(your_data, 
+#                                           localidad_column = "Localidad", 
+#                                           partido_column = "Partido", 
+#                                           localidad_partido_map = localidad_partido_map)
+
+# Print the resulting data to see the changes
+# head(emails_primera_limpieza)
